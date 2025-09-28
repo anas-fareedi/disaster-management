@@ -1,7 +1,7 @@
 # disaster-management
 disaster-management by crowdsourcing project for Hackathon
 
-'''
+```
 crowdsourced-disaster-relief/
 │
 ├── app/
@@ -35,4 +35,4 @@ crowdsourced-disaster-relief/
 │
 ├── requirements.txt             # FastAPI, SQLAlchemy, Jinja2, MySQL connector
 └── README.md
-'''
+```
