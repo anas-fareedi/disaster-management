@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relief Requests Map | Disaster Relief Hub</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet Marker Cluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-hands-helping"></i> Disaster Relief Hub</h1>
+            <nav class="nav">
+                <a href="/"><i class="fas fa-plus-circle"></i> Submit Request</a>
+                <a href="/map" class="active"><i class="fas fa-map-marked-alt"></i> View Map</a>
+                <a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="map-container">
+                <div class="map-controls">
+                    <h2><i class="fas fa-map-marked-alt"></i> Disaster Relief Requests Map</h2>
+
+                    <!-- Filters -->
+                    <div class="filter-section">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label for="typeFilter">Request Type:</label>
+                                <select id="typeFilter">
+                                    <option value="">All Types</option>
+                                    <option value="rescue">Rescue</option>
+                                    <option value="medical">Medical</option>
+                                    <option value="food">Food</option>
+                                    <option value="water">Water</option>
+                                    <option value="shelter">Shelter</option>
+                                    <option value="clothing">Clothing</option>
+                                    <option value="transportation">Transportation</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="urgencyFilter">Urgency:</label>
+                                <select id="urgencyFilter">
+                                    <option value="">All Levels</option>
+                                    <option value="critical">Critical</option>
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="statusFilter">Status:</label>
+                                <select id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="in_progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <button id="applyFilters" class="btn-primary">
+                                    <i class="fas fa-filter"></i> Apply Filters
+                                </button>
+                                <button id="clearFilters" class="btn-secondary">
+                                    <i class="fas fa-times"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map Statistics -->
+                    <div class="map-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Requests:</span>
+                            <span id="totalRequests" class="stat-value">Loading...</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Visible on Map:</span>
+                            <span id="visibleRequests" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Urgent:</span>
+                            <span id="urgentRequests" class="stat-value urgent">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Location Search -->
+                    <div class="location-search">
+                        <input type="text" id="locationSearch" placeholder="Search location..." />
+                        <button id="searchLocation" class="btn-secondary">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                        <button id="getCurrentLocationBtn" class="btn-secondary">
+                            <i class="fas fa-crosshairs"></i> My Location
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Map -->
+                <div id="map" class="map"></div>
+
+                <!-- Legend -->
+                <div class="map-legend">
+                    <h4><i class="fas fa-info-circle"></i> Legend</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-marker critical"></div>
+                            <span>Critical</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker high"></div>
+                            <span>High</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker medium"></div>
+                            <span>Medium</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker low"></div>
+                            <span>Low</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker completed"></div>
+                            <span>Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Disaster Relief Hub. Real-time disaster relief coordination.</p>
+        </footer>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div id="requestModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('requestModal')">&times;</span>
+            <div id="requestDetails">
+                <!-- Request details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loader"></div>
+        <p>Loading map data...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="/static/js/map.js"></script>
+</body>
+</html>

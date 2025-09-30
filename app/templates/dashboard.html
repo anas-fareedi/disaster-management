@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Dashboard | Disaster Relief Hub</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-hands-helping"></i> Disaster Relief Hub</h1>
+            <nav class="nav">
+                <a href="/"><i class="fas fa-plus-circle"></i> Submit Request</a>
+                <a href="/map"><i class="fas fa-map-marked-alt"></i> View Map</a>
+                <a href="/dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="dashboard">
+                <h2><i class="fas fa-tachometer-alt"></i> Volunteer & NGO Dashboard</h2>
+
+                <!-- Statistics Overview -->
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <div class="stat-icon pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pendingCount">Loading...</h3>
+                            <p>Pending Requests</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon urgent">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="urgentCount">Loading...</h3>
+                            <p>Urgent Requests</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon progress">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="progressCount">Loading...</h3>
+                            <p>In Progress</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon completed">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completedCount">Loading...</h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="dashboard-actions">
+                    <button id="refreshData" class="btn-primary">
+                        <i class="fas fa-sync-alt"></i> Refresh Data
+                    </button>
+                    <button id="showUrgentOnly" class="btn-urgent">
+                        <i class="fas fa-exclamation-triangle"></i> Show Urgent Only
+                    </button>
+                    <button id="showNearby" class="btn-secondary">
+                        <i class="fas fa-map-marker-alt"></i> Show Nearby
+                    </button>
+                </div>
+
+                <!-- Filters and Search -->
+                <div class="dashboard-filters">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="dashboardTypeFilter">Request Type:</label>
+                            <select id="dashboardTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="rescue">Rescue</option>
+                                <option value="medical">Medical</option>
+                                <option value="food">Food</option>
+                                <option value="water">Water</option>
+                                <option value="shelter">Shelter</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="transportation">Transportation</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="dashboardUrgencyFilter">Urgency:</label>
+                            <select id="dashboardUrgencyFilter">
+                                <option value="">All Levels</option>
+                                <option value="critical">Critical</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="dashboardStatusFilter">Status:</label>
+                            <select id="dashboardStatusFilter">
+                                <option value="pending">Pending Only</option>
+                                <option value="">All Status</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <input type="text" id="searchRequests" placeholder="Search requests..." />
+                            <button id="applyDashboardFilters" class="btn-primary">Apply</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requests List -->
+                <div class="requests-section">
+                    <h3><i class="fas fa-list"></i> Relief Requests</h3>
+
+                    <div class="requests-header">
+                        <div class="sort-options">
+                            <label for="sortBy">Sort by:</label>
+                            <select id="sortBy">
+                                <option value="created_at">Date Created</option>
+                                <option value="urgency_level">Urgency Level</option>
+                                <option value="request_type">Request Type</option>
+                                <option value="people_affected">People Affected</option>
+                            </select>
+                            <select id="sortOrder">
+                                <option value="desc">Newest First</option>
+                                <option value="asc">Oldest First</option>
+                            </select>
+                        </div>
+
+                        <div class="pagination-info">
+                            <span id="paginationInfo">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div id="requestsList" class="requests-list">
+                        <!-- Requests will be populated here -->
+                        <div class="loading-placeholder">
+                            <i class="fas fa-spinner fa-spin"></i> Loading requests...
+                        </div>
+                    </div>
+
+                    <div class="pagination">
+                        <button id="prevPage" class="btn-secondary" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span id="pageInfo">Page 1 of 1</span>
+                        <button id="nextPage" class="btn-secondary" disabled>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Disaster Relief Hub. Empowering volunteers to make a difference.</p>
+        </footer>
+    </div>
+
+    <!-- Request Detail Modal -->
+    <div id="requestDetailModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('requestDetailModal')">&times;</span>
+            <div id="requestDetailContent">
+                <!-- Detailed request information will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Modal -->
+    <div id="assignmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('assignmentModal')">&times;</span>
+            <h3><i class="fas fa-user-plus"></i> Assign Request</h3>
+            <form id="assignmentForm">
+                <input type="hidden" id="assignRequestId" />
+                <div class="form-group">
+                    <label for="assigneeName">Volunteer/NGO Name *</label>
+                    <input type="text" id="assigneeName" required maxlength="100" 
+                           placeholder="Full name of volunteer or NGO">
+                </div>
+                <div class="form-group">
+                    <label for="assigneeContact">Contact Number *</label>
+                    <input type="tel" id="assigneeContact" required maxlength="20" 
+                           placeholder="+91-XXXXXXXXXX">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i> Assign Request
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('assignmentModal')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="message-container"></div>
+
+    <!-- Location Permission Modal -->
+    <div id="locationModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-map-marker-alt"></i> Location Access</h3>
+            <p>To show nearby requests, we need access to your location. This helps you find requests in your area.</p>
+            <div class="form-actions">
+                <button id="allowLocation" class="btn-primary">
+                    <i class="fas fa-check"></i> Allow Location Access
+                </button>
+                <button class="btn-secondary" onclick="closeModal('locationModal')">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

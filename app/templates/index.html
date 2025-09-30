@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Disaster Relief Request | Disaster Relief Hub</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-hands-helping"></i> Disaster Relief Hub</h1>
+            <nav class="nav">
+                <a href="/" class="active"><i class="fas fa-plus-circle"></i> Submit Request</a>
+                <a href="/map"><i class="fas fa-map-marked-alt"></i> View Map</a>
+                <a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="form-container">
+                <h2><i class="fas fa-exclamation-triangle"></i> Submit Emergency Request</h2>
+                <p class="form-description">
+                    Fill out this form to request disaster relief assistance. Your request will be reviewed and matched with available volunteers and NGOs.
+                </p>
+
+                <form id="requestForm" class="request-form">
+                    <!-- Request Details -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-info-circle"></i> Request Details</h3>
+
+                        <div class="form-group">
+                            <label for="title" class="required">Brief Title *</label>
+                            <input type="text" id="title" name="title" required 
+                                   placeholder="e.g., Medical Emergency - Elderly Person Needs Help"
+                                   maxlength="200">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="request_type" class="required">Type of Assistance *</label>
+                                <select id="request_type" name="request_type" required>
+                                    <option value="">Select assistance type...</option>
+                                    <option value="rescue">Rescue Operation</option>
+                                    <option value="MEDICAL">Medical Emergency</option>
+                                    <option value="food">Food Assistance</option>
+                                    <option value="water">Clean Water</option>
+                                    <option value="shelter">Shelter/Housing</option>
+                                    <option value="clothing">Clothing/Supplies</option>
+                                    <option value="transportation">Transportation</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="urgency_level" class="required">Urgency Level *</label>
+                                <select id="urgency_level" name="urgency_level" required>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                    <option value="HIGH">High</option>
+                                    <option value="critical">Critical</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="required">Detailed Description *</label>
+                            <textarea id="description" name="description" required 
+                                      placeholder="Provide detailed information about the situation, who is affected, and what kind of help is needed..."
+                                      rows="4" maxlength="2000"></textarea>
+                            <small class="char-count">0 / 2000 characters</small>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="people_affected">People Affected</label>
+                                <input type="number" id="people_affected" name="people_affected" 
+                                       min="1" max="1000" value="1">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="estimated_cost">Estimated Cost (₹)</label>
+                                <input type="number" id="estimated_cost" name="estimated_cost" 
+                                       min="0" step="100" placeholder="Optional">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-address-book"></i> Contact Information</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contact_name" class="required">Your Name *</label>
+                                <input type="text" id="contact_name" name="contact_name" required 
+                                       placeholder="Full name" maxlength="100">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contact_phone" class="required">Phone Number *</label>
+                                <input type="tel" id="contact_phone" name="contact_phone" required 
+                                       placeholder="+91-XXXXXXXXXX" maxlength="20">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact_email">Email Address</label>
+                            <input type="email" id="contact_email" name="contact_email" 
+                                   placeholder="Optional - for updates" maxlength="100">
+                        </div>
+                    </div>
+
+                    <!-- Location Information -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-map-marker-alt"></i> Location Information</h3>
+
+                        <div class="form-group">
+                            <label for="address" class="required">Full Address *</label>
+                            <textarea id="address" name="address" required 
+                                      placeholder="Complete address including city, state, and PIN code"
+                                      rows="3" maxlength="500"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="landmark">Nearby Landmark</label>
+                            <input type="text" id="landmark" name="landmark" 
+                                   placeholder="e.g., Near City Hospital, Behind Police Station" 
+                                   maxlength="200">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="latitude" class="required">Latitude *</label>
+                                <input type="number" id="latitude" name="latitude" required 
+                                       step="any" min="-90" max="90" 
+                                       placeholder="e.g., 28.6139">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="longitude" class="required">Longitude *</label>
+                                <input type="number" id="longitude" name="longitude" required 
+                                       step="any" min="-180" max="180" 
+                                       placeholder="e.g., 77.2090">
+                            </div>
+                        </div>
+
+                        <div class="location-actions">
+                            <button type="button" id="getCurrentLocation" class="btn-secondary">
+                                <i class="fas fa-crosshairs"></i> Get Current Location
+                            </button>
+                            <button type="button" id="showOnMap" class="btn-secondary">
+                                <i class="fas fa-map"></i> Show on Map
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-sticky-note"></i> Additional Information</h3>
+
+                        <div class="form-group">
+                            <label for="additional_notes">Additional Notes</label>
+                            <textarea id="additional_notes" name="additional_notes" 
+                                      placeholder="Any other relevant information that might help responders..."
+                                      rows="3" maxlength="1000"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="disaster_event_id">Disaster Event ID</label>
+                            <input type="text" id="disaster_event_id" name="disaster_event_id" 
+                                   placeholder="If this is part of a specific disaster event" 
+                                   maxlength="50">
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="submitBtn">
+                            <i class="fas fa-paper-plane"></i> Submit Request
+                        </button>
+                        <button type="reset" class="btn-secondary">
+                            <i class="fas fa-undo"></i> Reset Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Disaster Relief Hub. Connecting communities in times of need.</p>
+        </footer>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <div class="loader"></div>
+            <p>Submitting your request...</p>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h3>Request Submitted Successfully!</h3>
+            <p id="successMessage">Your request has been received and will be reviewed shortly.</p>
+            <button class="btn-primary" onclick="closeModal('successModal')">OK</button>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-exclamation-triangle error-icon"></i>
+            <h3>Submission Failed</h3>
+            <p id="errorMessage">There was an error submitting your request. Please try again.</p>
+            <button class="btn-primary" onclick="closeModal('errorModal')">OK</button>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
