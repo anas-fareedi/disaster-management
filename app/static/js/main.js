@@ -1,4 +1,3 @@
-// Disaster Relief Hub - Main JavaScript
 // Handles form submissions and main page interactions
 
 class DisasterReliefApp {
@@ -9,44 +8,37 @@ class DisasterReliefApp {
     }
 
     initializeApp() {
-        console.log('🚀 Disaster Relief Hub initialized');
+        console.log(' Disaster Relief Hub initialized');
 
-        // Initialize character counters
         this.initializeCharacterCounters();
 
-        // Initialize form validation
         this.initializeFormValidation();
 
-        // Check for saved form data
         this.loadSavedFormData();
     }
 
     bindEvents() {
-        // Form submission
+        
         const form = document.getElementById('requestForm');
         if (form) {
             form.addEventListener('submit', this.handleFormSubmission.bind(this));
         }
-
-        // Get current location
+        
         const getCurrentLocationBtn = document.getElementById('getCurrentLocation');
         if (getCurrentLocationBtn) {
             getCurrentLocationBtn.addEventListener('click', this.getCurrentLocation.bind(this));
         }
 
-        // Show on map
         const showOnMapBtn = document.getElementById('showOnMap');
         if (showOnMapBtn) {
             showOnMapBtn.addEventListener('click', this.showLocationOnMap.bind(this));
         }
 
-        // Form reset
         const form_reset = document.querySelector('button[type="reset"]');
         if (form_reset) {
             form_reset.addEventListener('click', this.handleFormReset.bind(this));
         }
 
-        // Auto-save form data
         this.bindAutoSaveEvents();
     }
 
@@ -71,7 +63,7 @@ class DisasterReliefApp {
                 };
 
                 textarea.addEventListener('input', updateCounter);
-                updateCounter(); // Initialize
+                updateCounter(); 
             }
         });
     }
@@ -80,20 +72,17 @@ class DisasterReliefApp {
         const form = document.getElementById('requestForm');
         if (!form) return;
 
-        // Real-time validation
         const inputs = form.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
             input.addEventListener('blur', this.validateField.bind(this));
             input.addEventListener('input', this.clearFieldError.bind(this));
         });
 
-        // Phone number formatting
         const phoneInput = document.getElementById('contact_phone');
         if (phoneInput) {
             phoneInput.addEventListener('input', this.formatPhoneNumber.bind(this));
         }
 
-        // Coordinate validation
         const latInput = document.getElementById('latitude');
         const lngInput = document.getElementById('longitude');
 
@@ -107,7 +96,6 @@ class DisasterReliefApp {
         const field = event.target;
         const value = field.value.trim();
 
-        // Remove previous error styles
         this.clearFieldError(event);
 
         // Validation rules
@@ -159,7 +147,6 @@ class DisasterReliefApp {
             existingError.remove();
         }
 
-        // Add error message
         const errorElement = document.createElement('div');
         errorElement.className = 'field-error';
         errorElement.style.color = 'var(--danger-color)';
@@ -183,11 +170,9 @@ class DisasterReliefApp {
         const input = event.target;
         let value = input.value.replace(/[^0-9+()-\s]/g, '');
 
-        // Basic formatting for Indian numbers
         if (value.match(/^[0-9]{10}$/)) {
             value = '+91-' + value;
         }
-
         input.value = value;
     }
 
@@ -218,11 +203,9 @@ class DisasterReliefApp {
         const submitBtn = document.getElementById('submitBtn');
         const formData = new FormData(form);
 
-        // Convert FormData to JSON
         const requestData = {};
         for (let [key, value] of formData.entries()) {
             if (value.trim()) {
-                // Convert numeric fields
                 if (['latitude', 'longitude', 'people_affected', 'estimated_cost'].includes(key)) {
                     requestData[key] = parseFloat(value) || (key === 'people_affected' ? 1 : null);
                 } else {
@@ -231,14 +214,12 @@ class DisasterReliefApp {
             }
         }
 
-        // Validate required fields
         const validationErrors = this.validateRequestData(requestData);
         if (validationErrors.length > 0) {
             this.showErrorMessage('Please fix the following errors:\n' + validationErrors.join('\n'));
             return;
         }
 
-        // Show loading state
         this.showModal('loadingModal');
         submitBtn.disabled = true;
 
@@ -256,20 +237,16 @@ class DisasterReliefApp {
             this.hideModal('loadingModal');
 
             if (response.ok) {
-                // Success
                 document.getElementById('successMessage').textContent = 
                     `Your request has been submitted successfully! Request ID: ${result.id}`;
                 this.showModal('successModal');
-
-                // Clear form and saved data
+              
                 form.reset();
                 this.clearSavedFormData();
-
-                // Reset character counters
+            
                 this.initializeCharacterCounters();
 
             } else {
-                // Error from server
                 this.showErrorModal(result.detail || 'Failed to submit request. Please try again.');
             }
 
@@ -396,7 +373,6 @@ class DisasterReliefApp {
             console.error('Reverse geocoding error:', error);
         }
     }
-
     showLocationOnMap() {
         const lat = document.getElementById('latitude').value;
         const lng = document.getElementById('longitude').value;
@@ -416,7 +392,6 @@ class DisasterReliefApp {
             this.clearSavedFormData();
             this.currentLocation = null;
 
-            // Reset character counters
             setTimeout(() => {
                 this.initializeCharacterCounters();
             }, 100);
@@ -458,8 +433,7 @@ class DisasterReliefApp {
 
         try {
             const data = JSON.parse(savedData);
-
-            // Populate form fields
+            
             for (let [key, value] of Object.entries(data)) {
                 const field = document.querySelector(`[name="${key}"]`);
                 if (field) {
@@ -478,8 +452,7 @@ class DisasterReliefApp {
     clearSavedFormData() {
         localStorage.removeItem('disaster_relief_form_data');
     }
-
-    // Utility functions
+    
     isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -498,7 +471,6 @@ class DisasterReliefApp {
         return !isNaN(lng) && lng >= -180 && lng <= 180;
     }
 
-    // Modal functions
     showModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
@@ -523,7 +495,6 @@ class DisasterReliefApp {
         this.showModal('errorModal');
     }
 
-    // Message functions
     showSuccessMessage(message) {
         this.showMessage(message, 'success');
     }
@@ -569,7 +540,6 @@ class DisasterReliefApp {
     }
 }
 
-// Global modal close function
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -582,9 +552,9 @@ window.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal')) {
         event.target.style.display = 'none';
     }
-});
+}); 
 
-// Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     window.disasterReliefApp = new DisasterReliefApp();
 });
+Directions

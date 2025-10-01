@@ -1,4 +1,3 @@
-// Disaster Relief Hub - Map JavaScript
 // Handles map functionality and request visualization
 
 class DisasterReliefMap {
@@ -16,7 +15,6 @@ class DisasterReliefMap {
     }
 
     initializeMap() {
-        // Initialize Leaflet map
         this.map = L.map('map').setView([20.5937, 78.9629], 5); // Center of India
 
         // Add tile layer
@@ -26,7 +24,6 @@ class DisasterReliefMap {
             minZoom: 3
         }).addTo(this.map);
 
-        // Initialize marker cluster group
         this.markerCluster = L.markerClusterGroup({
             chunkedLoading: true,
             maxClusterRadius: 80,
@@ -36,28 +33,23 @@ class DisasterReliefMap {
         });
 
         this.map.addLayer(this.markerCluster);
-
-        // Check URL parameters for specific location
+        
         this.checkURLParameters();
     }
 
     bindEvents() {
-        // Filter controls
         document.getElementById('applyFilters').addEventListener('click', this.applyFilters.bind(this));
         document.getElementById('clearFilters').addEventListener('click', this.clearFilters.bind(this));
 
-        // Location search
         document.getElementById('searchLocation').addEventListener('click', this.searchLocation.bind(this));
         document.getElementById('getCurrentLocationBtn').addEventListener('click', this.getCurrentLocation.bind(this));
 
-        // Enter key for search
         document.getElementById('locationSearch').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 this.searchLocation();
             }
         });
 
-        // Map events
         this.map.on('click', this.onMapClick.bind(this));
         this.map.on('zoomend', this.onZoomChange.bind(this));
     }
@@ -76,7 +68,6 @@ class DisasterReliefMap {
             if (!isNaN(latitude) && !isNaN(longitude)) {
                 this.map.setView([latitude, longitude], zoomLevel);
 
-                // Add a temporary marker for the specified location
                 const marker = L.marker([latitude, longitude], {
                     icon: this.createCustomIcon('location', '#ff6b6b')
                 }).addTo(this.map);
@@ -127,7 +118,6 @@ class DisasterReliefMap {
     }
 
     updateMapMarkers() {
-        // Clear existing markers
         this.markerCluster.clearLayers();
         this.markers = [];
 
@@ -138,7 +128,6 @@ class DisasterReliefMap {
             this.markerCluster.addLayer(marker);
         });
 
-        // Update visible requests count
         document.getElementById('visibleRequests').textContent = this.filteredRequests.length;
     }
 
@@ -147,14 +136,12 @@ class DisasterReliefMap {
 
         const marker = L.marker([request.latitude, request.longitude], { icon });
 
-        // Create popup content
         const popupContent = this.createPopupContent(request);
         marker.bindPopup(popupContent, {
             maxWidth: 400,
             className: 'request-popup'
         });
 
-        // Store request data with marker
         marker.requestData = request;
 
         return marker;
@@ -369,7 +356,6 @@ class DisasterReliefMap {
 
             this.map.setView([lat, lon], 13);
 
-            // Add search result marker
             if (this.searchMarker) {
                 this.map.removeLayer(this.searchMarker);
             }
@@ -417,8 +403,7 @@ class DisasterReliefMap {
                 const lng = position.coords.longitude;
 
                 this.map.setView([lat, lng], 15);
-
-                // Add current location marker
+                
                 if (this.currentLocationMarker) {
                     this.map.removeLayer(this.currentLocationMarker);
                 }
@@ -463,7 +448,6 @@ class DisasterReliefMap {
         const lat = e.latlng.lat.toFixed(6);
         const lng = e.latlng.lng.toFixed(6);
 
-        // Show coordinates in a popup
         L.popup()
             .setLatLng(e.latlng)
             .setContent(`
@@ -480,7 +464,6 @@ class DisasterReliefMap {
     }
 
     onZoomChange() {
-        // Adjust marker cluster radius based on zoom level
         const zoom = this.map.getZoom();
         const radius = zoom > 10 ? 40 : 80;
 
@@ -492,7 +475,6 @@ class DisasterReliefMap {
         const request = this.allRequests.find(r => r.id === requestId);
         if (!request) return;
 
-        // Create detailed modal content
         const modalContent = `
             <h3><i class="fas fa-info-circle"></i> Request Details</h3>
             <div class="request-detail-content">
@@ -565,8 +547,6 @@ class DisasterReliefMap {
     }
 
     showAssignmentForm(requestId) {
-        // This would typically integrate with the dashboard functionality
-        // For now, redirect to dashboard with the request ID
         window.open(`/dashboard?assign=${requestId}`, '_blank');
     }
 
@@ -598,7 +578,6 @@ class DisasterReliefMap {
     }
 
     showMessage(message, type = 'info') {
-        // Create message element
         const messageElement = document.createElement('div');
         messageElement.className = `message ${type}`;
         messageElement.innerHTML = `
@@ -646,7 +625,6 @@ window.addEventListener('click', function(event) {
     }
 });
 
-// Initialize map when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     window.disasterMap = new DisasterReliefMap();
 });

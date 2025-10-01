@@ -21,6 +21,7 @@ SessionLocal = sessionmaker(
     autoflush=False, 
     bind=engine
 )
+
 Base = declarative_base()
 
 def get_db():
@@ -46,3 +47,4 @@ def check_db_connection():
     except Exception as e:
         print(f"❌ Database connection failed: {e}")
         return False
+    

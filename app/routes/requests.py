@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import math
-# size: int = Query(10, 
 from database import get_db
+from crud import get_crud
+from utils.filters import is_spam_request, is_duplicate_request
 from schemas import (
     DisasterRequestCreate, 
     DisasterRequestUpdate, 
@@ -12,10 +13,7 @@ from schemas import (
     RequestFilters,
     APIResponse
 )
-from crud import get_crud
-from utils.filters import is_spam_request, is_duplicate_request
 
-# Create router
 router = APIRouter()
 @router.post("/requests", response_model=DisasterRequestResponse, status_code=status.HTTP_201_CREATED)
 async def create_request(
@@ -23,27 +21,26 @@ async def create_request(
     db: Session = Depends(get_db)
 ):
     """Create a new disaster relief request"""
-    # 🔍 DEBUG: Print received data
-    print(f"🔍 DEBUG - Received data:")
+    #  DEBUG
+    print(f" DEBUG - Received data:")
     print(f"   request_type: {request_data.request_type}")
     print(f"   urgency_level: {request_data.urgency_level}")
     print(f"   title: {request_data.title}")
     
     crud = get_crud(db)
 
-    # ✅ ADD THESE 2 LINES - Convert enum values to uppercase
+   # Convert enum values to uppercase
     request_data.request_type = request_data.request_type.upper()
     request_data.urgency_level = request_data.urgency_level.upper()
 
     # Check for spam (basic validation)
     if is_spam_request(request_data):
-        # ... rest of function stays the same
+        
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Request appears to be spam or invalid"
         )
 
-    # Check for duplicates
     if is_duplicate_request(db, request_data):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -78,16 +75,15 @@ async def get_requests(
 
     Returns a paginated list of disaster relief requests with various filtering options.
     """
+    if request_type:
+        request_type = request_type.upper()
+    if status:
+        status = status.upper()  
+    if urgency_level:
+        urgency_level = urgency_level.upper()
+        
     crud = get_crud(db)
 
-    # if request_type:
-    #     request_type = request_type.upper()
-    # if urgency_level:
-    #     urgency_level = urgency_level.upper()
-    # if status:  # ← ADD THIS LINE
-    #     status = status.upper()
-
-    # Build filters
     filters = RequestFilters(
         request_type=request_type,
         urgency_level=urgency_level,
@@ -129,7 +125,6 @@ async def get_request(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Request with ID {request_id} not found"
         )
-
     return request
 
 
@@ -141,7 +136,6 @@ async def update_request(
 ):
     """
     Update an existing disaster relief request
-
     Allows updating of request details, status, assignment, and other fields.
     """
     crud = get_crud(db)
@@ -152,7 +146,6 @@ async def update_request(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Request with ID {request_id} not found"
         )
-
     return updated_request
 
 
@@ -189,7 +182,6 @@ async def get_nearby_requests(
 ):
     """
     Find disaster relief requests near a specific location
-
     Uses the Haversine formula to calculate distances and return requests within the specified radius.
     """
     crud = get_crud(db)
@@ -204,7 +196,6 @@ async def get_urgent_requests(
 ):
     """
     Get the most urgent active disaster relief requests
-
     Returns requests marked as HIGH or CRITICAL urgency that are still pending.
     """
     crud = get_crud(db)
@@ -235,7 +226,6 @@ async def assign_request(
 ):
     """
     Assign a disaster relief request to a volunteer or NGO
-
     Changes the status to IN_PROGRESS and records the assignee details.
     """
     crud = get_crud(db)
@@ -274,7 +264,6 @@ async def mark_request_completed(
 async def get_statistics(db: Session = Depends(get_db)):
     """
     Get statistics about disaster relief requests
-
     Returns counts, completion rates, and type distribution of requests.
     """
     crud = get_crud(db)
@@ -284,3 +273,4 @@ async def get_statistics(db: Session = Depends(get_db)):
         "message": "Statistics retrieved successfully",
         "data": stats
     }
+

@@ -4,7 +4,6 @@ from sqlalchemy import and_, or_, func, text
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import math
-# def get_requests
 from models import DisasterRequest, RequestStatusEnum, UrgencyLevelEnum, RequestTypeEnum
 from schemas import DisasterRequestCreate, DisasterRequestUpdate, RequestFilters
 
@@ -15,7 +14,7 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     on the earth (specified in decimal degrees)
     Returns distance in kilometers
     """
-    # Convert decimal degrees to radians
+   
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
 
     # Haversine formula
@@ -25,7 +24,6 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     c = 2 * math.asin(math.sqrt(a))
     r = 6371  # Radius of earth in kilometers
     return c * r
-
 
 class DisasterRequestCRUD:
     """CRUD operations for disaster relief requests"""
@@ -58,10 +56,10 @@ class DisasterRequestCRUD:
         query = self.db.query(DisasterRequest)
 
         if filters.status:
-            query = query.filter(DisasterRequest.status == filters.status.upper())
+            query = query.filter(DisasterRequest.status == filters.status)
     
         if filters.request_type:
-            query = query.filter(DisasterRequest.request_type == filters.request_type.upper())
+            query = query.filter(DisasterRequest.request_type == filters.request_type)
         
         if filters.urgency_level:
             query = query.filter(DisasterRequest.urgency_level == filters.urgency_level.upper())
@@ -72,7 +70,6 @@ class DisasterRequestCRUD:
         if filters.is_active is not None:
             query = query.filter(DisasterRequest.is_active == filters.is_active)
     
-        # Apply sorting
         if sort_order == "desc":
             query = query.order_by(getattr(DisasterRequest, sort_by).desc())
         else:
@@ -80,22 +77,6 @@ class DisasterRequestCRUD:
         
         return query.offset(skip).limit(limit).all()
     
-        # if filters.request_type:
-        #     query = query.filter(DisasterRequest.request_type == filters.request_type.upper())
-        # if filters.status:
-        #     query = query.filter(DisasterRequest.status == filters.status.upper())
-    
-        # # Apply filters
-        # if filters:
-        #     query = self._apply_filters(query, filters)
-
-        # # Apply sorting
-        # if sort_order.lower() == "desc":
-        #     query = query.order_by(getattr(DisasterRequest, sort_by).desc())
-        # else:
-        #     query = query.order_by(getattr(DisasterRequest, sort_by).asc())
-
-        # return query.offset(skip).limit(limit).all()
 
     def count_requests(self, filters: Optional[RequestFilters] = None) -> int:
         """Count total requests with optional filtering"""
@@ -108,7 +89,8 @@ class DisasterRequestCRUD:
             query = query.filter(DisasterRequest.urgency_level == filters.urgency_level.upper())
         
         if filters.status:
-            query = query.filter(DisasterRequest.status == filters.status.upper())
+            # query = query.filter(DisasterRequest.status == filters.status.upper())
+            query = query.filter(DisasterRequest.status == filters.status)
         
         if filters.is_verified is not None:
             query = query.filter(DisasterRequest.is_verified == filters.is_verified)
@@ -116,8 +98,6 @@ class DisasterRequestCRUD:
         if filters.is_active is not None:
             query = query.filter(DisasterRequest.is_active == filters.is_active)
         
-        # if filters:
-        #     query = self._apply_filters(query, filters)
 
         return query.count()
 
@@ -128,12 +108,10 @@ class DisasterRequestCRUD:
         if not db_request:
             return None
 
-        # Update only provided fields
         update_dict = update_data.dict(exclude_unset=True)
         for field, value in update_dict.items():
             setattr(db_request, field, value)
 
-        # Update the updated_at timestamp
         db_request.updated_at = datetime.utcnow()
 
         self.db.commit()
@@ -179,7 +157,6 @@ class DisasterRequestCRUD:
 
         requests = query.limit(limit).all()
 
-        # Filter by exact distance using Haversine formula
         nearby_requests = []
         for req in requests:
             distance = haversine_distance(center_lat, center_lng, req.latitude, req.longitude)
@@ -316,6 +293,7 @@ class DisasterRequestCRUD:
             query = query.filter(DisasterRequest.longitude <= filters.lng_max)
 
         return query
+
 
 # Convenience functions for FastAPI routes
 def get_crud(db: Session) -> DisasterRequestCRUD:

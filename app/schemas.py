@@ -1,4 +1,4 @@
-
+from models import RequestTypeEnum, UrgencyLevelEnum, RequestStatusEnum
 from pydantic import BaseModel, EmailStr, Field, validator
 from typing import Optional, List
 from datetime import datetime
@@ -7,30 +7,30 @@ from enum import Enum
 
 class RequestTypeEnum(str, Enum):
     """Request types for validation"""
-    rescue = "rescue"
-    medical = "medical"
-    food = "food"
-    water = "water"
-    shelter = "shelter"
-    clothing = "clothing"
-    transportation = "transportation"
-    other = "other"
+    rescue = "RESCUE"
+    medical = "MEDICAL"
+    food = "FOOD"
+    water = "WATER"
+    shelter = "SHELTER"
+    clothing = "CLOTHING"
+    transportation = "TRANSPORTATION"
+    other = "OTHER"
 
 
 class UrgencyLevelEnum(str, Enum):
     """Urgency levels for validation"""
-    low = "low"
-    medium = "medium"
-    high = "high"
-    critical = "critical"
+    low = "LOW"
+    medium = "MEDIUM"
+    high = "HIGH"
+    critical = "CRITICAL"
 
 
 class RequestStatusEnum(str, Enum):
     """Request status for validation"""
-    pending = "pending"
-    in_progress = "in_progress"
-    completed = "completed"
-    cancelled = "cancelled"
+    pending = "PENDING"
+    in_progress = "IN_PROGRESS"
+    completed = "COMPLETED"
+    cancelled = "CANCELLED"
 
 
 class DisasterRequestBase(BaseModel):
@@ -98,24 +98,19 @@ class DisasterRequestBase(BaseModel):
             }
         }
 
-
-# class DisasterRequestCreate(DisasterRequestBase):
-#     """Schema for creating new disaster relief requests"""
-#     pass
-
 class DisasterRequestCreate(BaseModel):
     title: str
-    request_type: str = "MEDICAL"  # Default value
-    urgency_level: str = "HIGH"   # Default value
-    description: str = "Test description"
-    contact_name: str = "Test User"
+    request_type: str = "MEDICAL"  
+    urgency_level: str = "HIGH"   
+    description: str = "test description"
+    contact_name: str = "test User"
     contact_phone: str = "+91-1234567890"
     latitude: float = 28.6139
     longitude: float = 77.2090
-    address: str = "Test Address"
+    address: str = "test Address"
     
     class Config:
-        extra = "allow"  # Allow extra fields
+        extra = "allow" 
 
 
 class DisasterRequestUpdate(BaseModel):
@@ -125,22 +120,18 @@ class DisasterRequestUpdate(BaseModel):
     urgency_level: Optional[UrgencyLevelEnum] = None
     status: Optional[RequestStatusEnum] = None
 
-    # Update contact info
     contact_name: Optional[str] = Field(None, min_length=2, max_length=100)
     contact_phone: Optional[str] = Field(None, min_length=10, max_length=20)
     contact_email: Optional[str] = None
 
-    # Update location
     latitude: Optional[float] = Field(None, ge=-90, le=90)
     longitude: Optional[float] = Field(None, ge=-180, le=180)
     address: Optional[str] = Field(None, min_length=10, max_length=500)
     landmark: Optional[str] = Field(None, max_length=200)
 
-    # Assignment fields
     assigned_to: Optional[str] = Field(None, max_length=100, description="Name of volunteer/NGO assigned")
     assigned_contact: Optional[str] = Field(None, max_length=20, description="Contact of assigned person")
 
-    # Other fields
     people_affected: Optional[int] = Field(None, ge=1, le=1000)
     estimated_cost: Optional[float] = Field(None, ge=0)
     additional_notes: Optional[str] = Field(None, max_length=1000)
@@ -162,7 +153,6 @@ class DisasterRequestResponse(DisasterRequestBase):
     created_at: datetime
     updated_at: datetime
 
-    # Computed fields
     location_display: str
     is_urgent: bool
 
@@ -192,7 +182,6 @@ class RequestFilters(BaseModel):
     is_active: Optional[bool] = True
     disaster_event_id: Optional[str] = None
 
-    # Location-based filters
     lat_min: Optional[float] = Field(None, ge=-90, le=90)
     lat_max: Optional[float] = Field(None, ge=-90, le=90)
     lng_min: Optional[float] = Field(None, ge=-180, le=180)
@@ -203,7 +192,6 @@ class RequestFilters(BaseModel):
 
     class Config:
         use_enum_values = True
-
 
 class APIResponse(BaseModel):
     """Generic API response schema"""

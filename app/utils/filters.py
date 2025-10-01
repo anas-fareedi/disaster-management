@@ -47,27 +47,22 @@ def is_spam_request(request_data: DisasterRequestCreate) -> bool:
     for pattern in SUSPICIOUS_PATTERNS:
         if re.search(pattern, text_content):
             return True
-
-    # Check for unrealistic data
+    
     if request_data.people_affected > 1000:
         return True
-
-    # Check if title and description are too similar (copy-paste spam)
+    
     title_words = set(request_data.title.lower().split())
     desc_words = set(request_data.description.lower().split())
     if len(title_words.intersection(desc_words)) > len(title_words) * 0.8:
         return True
 
-    # Check for very short or very long descriptions
     if len(request_data.description) < 20 or len(request_data.description) > 5000:
         return True
 
-    # Check for invalid phone number patterns
     phone_digits = re.sub(r'[^0-9]', '', request_data.contact_phone)
     if len(phone_digits) < 10 or len(phone_digits) > 15:
         return True
 
-    # Check for repeated phone numbers (all same digit)
     if len(set(phone_digits)) <= 2:
         return True
 
@@ -87,40 +82,31 @@ def is_duplicate_request(db: Session, request_data: DisasterRequestCreate, radiu
     Returns:
         True if a duplicate request is found, False otherwise
     """
-
-    # Calculate time cutoff
+    
     time_cutoff = datetime.utcnow() - timedelta(hours=time_window_hours)
 
-    # Calculate location bounds (rough approximation)
-    lat_delta = radius_km / 111  # 1 degree ≈ 111km
+    lat_delta = radius_km / 111  
     lng_delta = radius_km / 111
-
-    # Search for similar requests
+    
     similar_requests = db.query(DisasterRequest).filter(
         and_(
-            # Location proximity
             DisasterRequest.latitude >= request_data.latitude - lat_delta,
             DisasterRequest.latitude <= request_data.latitude + lat_delta,
             DisasterRequest.longitude >= request_data.longitude - lng_delta,
             DisasterRequest.longitude <= request_data.longitude + lng_delta,
 
-            # Same request type
             DisasterRequest.request_type == request_data.request_type,
-
-            # Recent requests
+           
             DisasterRequest.created_at >= time_cutoff,
 
-            # Active requests only
             DisasterRequest.is_active == True,
 
-            # Same contact (likely same person)
             DisasterRequest.contact_phone == request_data.contact_phone
         )
     ).limit(10).all()
 
     # Check for exact matches
     for similar_req in similar_requests:
-        # Check if descriptions are very similar
         similarity_score = calculate_text_similarity(
             request_data.description.lower(),
             similar_req.description.lower()
@@ -128,8 +114,7 @@ def is_duplicate_request(db: Session, request_data: DisasterRequestCreate, radiu
 
         if similarity_score > 0.8:
             return True
-
-        # Check if same contact name and address
+        
         if (similar_req.contact_name.lower() == request_data.contact_name.lower() and
             similar_req.address.lower() == request_data.address.lower()):
             return True
@@ -140,15 +125,12 @@ def is_duplicate_request(db: Session, request_data: DisasterRequestCreate, radiu
 def calculate_text_similarity(text1: str, text2: str) -> float:
     """
     Calculate similarity between two text strings using Jaccard similarity
-
     Args:
         text1: First text string
         text2: Second text string
-
     Returns:
         Similarity score between 0 and 1
     """
-    # Convert to word sets
     words1 = set(text1.split())
     words2 = set(text2.split())
 
@@ -161,20 +143,16 @@ def calculate_text_similarity(text1: str, text2: str) -> float:
 
     return intersection / union
 
-
 def get_content_quality_score(request_data: DisasterRequestCreate) -> float:
     """
     Calculate a quality score for the request content
-
     Args:
         request_data: The request data to analyze
-
     Returns:
         Quality score between 0 and 1 (higher is better)
     """
     score = 0.0
-
-    # Title quality (0-20 points)
+    
     title_length = len(request_data.title)
     if 20 <= title_length <= 100:
         score += 20
@@ -205,8 +183,7 @@ def get_content_quality_score(request_data: DisasterRequestCreate) -> float:
         score += 5
     if len(request_data.address) >= 20:
         score += 10
-
-    # Additional information (0-15 points)
+    
     if request_data.additional_notes and len(request_data.additional_notes) > 10:
         score += 10
     if request_data.estimated_cost is not None and request_data.estimated_cost > 0:
@@ -255,5 +232,4 @@ def flag_suspicious_patterns(request_data: DisasterRequestCreate) -> List[str]:
     # Check for very recent coordinates (possible automated submission)
     if (abs(request_data.latitude) < 0.001 and abs(request_data.longitude) < 0.001):
         flags.append("Coordinates too close to 0,0")
-
     return flags

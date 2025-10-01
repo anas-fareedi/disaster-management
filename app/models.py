@@ -6,75 +6,66 @@ import enum
 
 class RequestTypeEnum(enum.Enum):
     """Types of disaster relief requests"""
-    RESCUE = "rescue"
-    MEDICAL = "medical"
-    FOOD = "food"
-    WATER = "water"
-    SHELTER = "shelter"
-    CLOTHING = "clothing"
-    TRANSPORTATION = "transportation"
-    OTHER = "other"
+    RESCUE = "RESCUE"
+    MEDICAL = "MEDICAL"
+    FOOD = "FOOD"
+    WATER = "WATER"
+    SHELTER = "SHELTER"
+    CLOTHING = "CLOTHING"
+    TRANSPORTATION = "TRANSPORTATION"
+    OTHER = "OTHER"
 
 
 class UrgencyLevelEnum(enum.Enum):
     """Urgency levels for requests"""
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
 
 
 class RequestStatusEnum(enum.Enum):
     """Status of disaster relief requests"""
-    PENDING = "pending"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
 
 
 class DisasterRequest(Base):
     """Main table for storing disaster relief requests"""
     __tablename__ = "disaster_requests"
 
-    # Primary key
     id = Column(Integer, primary_key=True, index=True)
 
-    # Request details
     title = Column(String(200), nullable=False, index=True)
     description = Column(Text, nullable=False)
     request_type = Column(Enum(RequestTypeEnum), nullable=False, index=True)
     urgency_level = Column(Enum(UrgencyLevelEnum), nullable=False, default=UrgencyLevelEnum.MEDIUM, index=True)
 
-    # Contact information
     contact_name = Column(String(100), nullable=False)
     contact_phone = Column(String(20), nullable=False)
     contact_email = Column(String(100), nullable=True)
 
-    # Location information (for mapping)
     latitude = Column(Float, nullable=False, index=True)
     longitude = Column(Float, nullable=False, index=True)
     address = Column(Text, nullable=False)
     landmark = Column(String(200), nullable=True)
 
-    # Request management
     status = Column(Enum(RequestStatusEnum), nullable=False, default=RequestStatusEnum.PENDING, index=True)
     people_affected = Column(Integer, nullable=False, default=1)
     estimated_cost = Column(Float, nullable=True)
 
-    # Volunteer/NGO assignment
     assigned_to = Column(String(100), nullable=True)
     assigned_contact = Column(String(20), nullable=True)
 
-    # Additional information
     additional_notes = Column(Text, nullable=True)
     is_verified = Column(Boolean, default=False, nullable=False, index=True)
     is_active = Column(Boolean, default=True, nullable=False, index=True)
 
-    # Metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
-    # For future expansion - disaster event tracking
     disaster_event_id = Column(String(50), nullable=True, index=True)
 
     def __repr__(self):

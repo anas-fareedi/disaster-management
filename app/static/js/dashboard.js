@@ -1,6 +1,5 @@
-// Disaster Relief Hub - Dashboard JavaScript
 // Handles volunteer/NGO dashboard functionality
-
+// Directions
 class DisasterReliefDashboard {
     constructor() {
         this.requests = [];
@@ -10,7 +9,7 @@ class DisasterReliefDashboard {
         this.currentFilters = {};
         this.sortBy = 'created_at';
         this.sortOrder = 'desc';
-
+ 
         this.initializeDashboard();
         this.bindEvents();
         this.loadRequests();
@@ -27,7 +26,6 @@ class DisasterReliefDashboard {
             applyBtn.addEventListener('click', () => this.applyFilters());
         }
 
-        // Refresh button
         const refreshBtn = document.getElementById('refreshData');
         if (refreshBtn) {
             refreshBtn.addEventListener('click', () => this.refreshData());
@@ -49,7 +47,6 @@ class DisasterReliefDashboard {
         try {
             console.log('📋 Loading requests...');
             
-            // Build query parameters
             const params = new URLSearchParams({
                 page: this.currentPage,
                 size: this.pageSize,
@@ -58,7 +55,6 @@ class DisasterReliefDashboard {
                 ...this.currentFilters
             });
 
-            // Fetch requests from API
             const response = await fetch(`/api/requests?${params}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -68,7 +64,6 @@ class DisasterReliefDashboard {
             this.requests = data.requests || [];
             this.totalPages = data.total_pages || 1;
 
-            // Render the requests
             this.renderRequestsList();
             this.updatePaginationInfo(data);
             this.calculateStatistics();
@@ -99,7 +94,6 @@ class DisasterReliefDashboard {
             `;
             return;
         }
-
         const requestsHTML = this.requests.map(request => this.createRequestCard(request)).join('');
         container.innerHTML = requestsHTML;
     }
@@ -184,8 +178,8 @@ class DisasterReliefDashboard {
                         <i class="fas fa-eye"></i> View Details
                     </button>
                     
-                    ${request.status === 'pending' ? `
-                        <button onclick="window.dashboard.assignRequest(${request.id})" style="
+                    ${request.status.toLowerCase() === 'pending' ? `
+                        <button onclick="window.dashboard.assignRequest(${request.id})" style="   
                             background: #27ae60; 
                             color: white; 
                             border: none; 
@@ -198,7 +192,7 @@ class DisasterReliefDashboard {
                         </button>
                     ` : ''}
                     
-                    ${request.status === 'in_progress' ? `
+                    ${request.status.toLowerCase() === 'in_progress' ? `
                         <button onclick="window.dashboard.completeRequest(${request.id})" style="
                             background: #f39c12; 
                             color: white; 
@@ -364,6 +358,7 @@ class DisasterReliefDashboard {
         if (!request) return;
 
         const details = `
+
 REQUEST DETAILS
 ===============
 
@@ -411,7 +406,7 @@ ${request.assigned_to ? `\nAssigned to: ${request.assigned_to} (${request.assign
             }
 
             this.showMessage(`Request assigned to ${volunteerName}`, 'success');
-            this.loadRequests(); // Refresh the list
+            this.loadRequests(); 
 
         } catch (error) {
             console.error('Assignment error:', error);
@@ -432,8 +427,8 @@ ${request.assigned_to ? `\nAssigned to: ${request.assigned_to} (${request.assign
             }
 
             this.showMessage('Request marked as completed', 'success');
-            this.loadRequests(); // Refresh the list
-
+            this.loadRequests(); 
+ 
         } catch (error) {
             console.error('Completion error:', error);
             this.showMessage('Failed to complete request', 'error');
@@ -485,7 +480,6 @@ ${request.assigned_to ? `\nAssigned to: ${request.assigned_to} (${request.assign
     }
 
     showMessage(message, type = 'info') {
-        // Remove existing messages
         const existingMessages = document.querySelectorAll('.dashboard-message');
         existingMessages.forEach(msg => msg.remove());
 
@@ -519,7 +513,6 @@ ${request.assigned_to ? `\nAssigned to: ${request.assigned_to} (${request.assign
                 ">×</button>
             </div>
         `;
-
         document.body.appendChild(messageDiv);
 
         // Auto remove after 4 seconds
@@ -530,11 +523,8 @@ ${request.assigned_to ? `\nAssigned to: ${request.assigned_to} (${request.assign
         }, 4000);
     }
 }
-
-// Initialize dashboard when page loads
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Initializing Disaster Relief Dashboard');
     window.dashboard = new DisasterReliefDashboard();
-});
-// Export for use in other scripts
+}); 
 window.DisasterReliefDashboard = DisasterReliefDashboard;

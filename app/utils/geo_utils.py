@@ -15,7 +15,7 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     Returns:
         Distance in kilometers
     """
-    # Convert decimal degrees to radians
+    
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
 
     # Haversine formula
@@ -23,7 +23,7 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     dlon = lon2 - lon1
     a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
     c = 2 * math.asin(math.sqrt(a))
-    r = 6371  # Radius of earth in kilometers
+    r = 6371  
     return c * r
 
 
@@ -90,7 +90,6 @@ def get_bounding_box(center_lat: float, center_lon: float, radius_km: float) -> 
         "max_lon": center_lon + lon_delta
     }
 
-
 def validate_coordinates(lat: float, lon: float) -> bool:
     """
     Validate if coordinates are within valid ranges
@@ -154,7 +153,6 @@ def cluster_nearby_requests(requests: List[Dict], max_distance_km: float = 0.5) 
     unclustered = requests.copy()
 
     while unclustered:
-        # Start a new cluster with the first unclustered request
         current_cluster = [unclustered.pop(0)]
 
         # Find all nearby requests to add to this cluster
@@ -242,8 +240,6 @@ def get_direction_text(bearing: float) -> str:
     index = round(bearing / 45) % 8
     return directions[index]
 
-
-# India-specific utilities
 INDIA_BOUNDS = {
     "min_lat": 6.4,
     "max_lat": 37.6,
@@ -313,7 +309,6 @@ def generate_map_bounds(requests: List[Dict], padding_percent: float = 10) -> Di
         Dictionary with map bounds
     """
     if not requests:
-        # Default to India bounds
         return INDIA_BOUNDS
 
     latitudes = [req['latitude'] for req in requests]
@@ -322,9 +317,9 @@ def generate_map_bounds(requests: List[Dict], padding_percent: float = 10) -> Di
     min_lat, max_lat = min(latitudes), max(latitudes)
     min_lon, max_lon = min(longitudes), max(longitudes)
 
-    # Add padding
     lat_padding = (max_lat - min_lat) * (padding_percent / 100)
     lon_padding = (max_lon - min_lon) * (padding_percent / 100)
+
 
     return {
         "min_lat": min_lat - lat_padding,
