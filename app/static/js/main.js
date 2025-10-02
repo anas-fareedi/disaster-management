@@ -557,4 +557,3 @@ window.addEventListener('click', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     window.disasterReliefApp = new DisasterReliefApp();
 });
-Directions
