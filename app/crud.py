@@ -62,7 +62,8 @@ class DisasterRequestCRUD:
             query = query.filter(DisasterRequest.request_type == filters.request_type)
         
         if filters.urgency_level:
-            query = query.filter(DisasterRequest.urgency_level == filters.urgency_level.upper())
+            urgency_value = filters.urgency_level.upper() if isinstance(filters.urgency_level, str) else filters.urgency_level
+            query = query.filter(DisasterRequest.urgency_level == urgency_value)
         
         if filters.is_verified is not None:
             query = query.filter(DisasterRequest.is_verified == filters.is_verified)
@@ -83,10 +84,12 @@ class DisasterRequestCRUD:
         query = self.db.query(DisasterRequest)
 
         if filters.request_type:
-            query = query.filter(DisasterRequest.request_type == filters.request_type.upper())
+            request_type_value = filters.request_type.upper() if isinstance(filters.request_type, str) else filters.request_type
+            query = query.filter(DisasterRequest.request_type == request_type_value)
     
         if filters.urgency_level:
-            query = query.filter(DisasterRequest.urgency_level == filters.urgency_level.upper())
+            urgency_value = filters.urgency_level.upper() if isinstance(filters.urgency_level, str) else filters.urgency_level
+            query = query.filter(DisasterRequest.urgency_level == urgency_value)
         
         if filters.status:
             # query = query.filter(DisasterRequest.status == filters.status.upper())

@@ -149,14 +149,14 @@ class DisasterReliefMap {
 
     createCustomIcon(type, color) {
         const iconMap = {
-            rescue: '🚑',
-            medical: '🏥',
-            food: '🍽️',
-            water: '💧',
-            shelter: '🏠',
-            clothing: '👕',
-            transportation: '🚗',
-            other: '❓'
+            RESCUE: '🚑',
+            MEDICAL: '🏥',
+            FOOD: '🍽️',
+            WATER: '💧',
+            SHELTER: '🏠',
+            CLOTHING: '👕',
+            TRANSPORTATION: '🚗',
+            OTHER: '❓'
         };
 
         const iconHtml = `
@@ -188,12 +188,12 @@ class DisasterReliefMap {
 
     getUrgencyColor(urgency) {
         const colors = {
-            critical: '#c0392b',
-            high: '#ff6b6b',
-            medium: '#f39c12',
-            low: '#3498db'
+            CRITICAL: '#c0392b',
+            HIGH: '#ff6b6b',
+            MEDIUM: '#f39c12',
+            LOW: '#3498db'
         };
-        return colors[urgency] || colors.medium;
+        return colors[urgency] || colors.MEDIUM;
     }
 
     createPopupContent(request) {
@@ -314,7 +314,7 @@ class DisasterReliefMap {
         const total = this.allRequests.length;
         const visible = this.filteredRequests.length;
         const urgent = this.filteredRequests.filter(req => 
-            req.urgency_level === 'critical' || req.urgency_level === 'high'
+            req.urgency_level === 'CRITICAL' || req.urgency_level === 'HIGH'
         ).length;
 
         document.getElementById('totalRequests').textContent = total;

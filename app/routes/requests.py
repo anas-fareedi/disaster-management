@@ -29,9 +29,11 @@ async def create_request(
     
     crud = get_crud(db)
 
-   # Convert enum values to uppercase
-    request_data.request_type = request_data.request_type.upper()
-    request_data.urgency_level = request_data.urgency_level.upper()
+    # Ensure enum values are properly formatted
+    if isinstance(request_data.request_type, str):
+        request_data.request_type = request_data.request_type.upper()
+    if isinstance(request_data.urgency_level, str):
+        request_data.urgency_level = request_data.urgency_level.upper()
 
     # Check for spam (basic validation)
     if is_spam_request(request_data):
@@ -75,6 +77,7 @@ async def get_requests(
 
     Returns a paginated list of disaster relief requests with various filtering options.
     """
+    # Normalize filter values to uppercase
     if request_type:
         request_type = request_type.upper()
     if status:

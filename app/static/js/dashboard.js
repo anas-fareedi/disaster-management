@@ -178,7 +178,7 @@ class DisasterReliefDashboard {
                         <i class="fas fa-eye"></i> View Details
                     </button>
                     
-                    ${request.status.toLowerCase() === 'pending' ? `
+                    ${request.status === 'PENDING' ? `
                         <button onclick="window.dashboard.assignRequest(${request.id})" style="   
                             background: #27ae60; 
                             color: white; 
@@ -192,7 +192,7 @@ class DisasterReliefDashboard {
                         </button>
                     ` : ''}
                     
-                    ${request.status.toLowerCase() === 'in_progress' ? `
+                    ${request.status === 'IN_PROGRESS' ? `
                         <button onclick="window.dashboard.completeRequest(${request.id})" style="
                             background: #f39c12; 
                             color: white; 
@@ -248,18 +248,18 @@ class DisasterReliefDashboard {
 
     getStatusColor(status) {
         const colors = {
-            'pending': '#f39c12',
-            'in_progress': '#3498db',
-            'completed': '#27ae60'
+            'PENDING': '#f39c12',
+            'IN_PROGRESS': '#3498db',
+            'COMPLETED': '#27ae60'
         };
         return colors[status] || '#7f8c8d';
     }
 
     calculateStatistics() {
-        const pending = this.requests.filter(r => r.status === 'pending').length;
+        const pending = this.requests.filter(r => r.status === 'PENDING').length;
         const urgent = this.requests.filter(r => r.urgency_level === 'CRITICAL' || r.urgency_level === 'HIGH').length;
-        const inProgress = this.requests.filter(r => r.status === 'in_progress').length;
-        const completed = this.requests.filter(r => r.status === 'completed').length;
+        const inProgress = this.requests.filter(r => r.status === 'IN_PROGRESS').length;
+        const completed = this.requests.filter(r => r.status === 'COMPLETED').length;
 
         this.updateStatDisplay('pendingCount', pending);
         this.updateStatDisplay('urgentCount', urgent);
