@@ -48,7 +48,7 @@ Update app/database.py with your DB credentials.
 **5️⃣ Run the application**
 uvicorn app.main:app --reload
 
-
+```
 crowdsourced-disaster-relief/
 │
 ├── app/
@@ -82,7 +82,7 @@ crowdsourced-disaster-relief/
 │
 ├── requirements.txt             # FastAPI, SQLAlchemy, Jinja2, MySQL connector
 └── README.md
-
+```
 **Contribution**
 
 Pull requests are welcome!
