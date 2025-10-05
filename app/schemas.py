@@ -7,30 +7,30 @@ from enum import Enum
 
 class RequestTypeEnum(str, Enum):
     """Request types for validation"""
-    rescue = "RESCUE"
-    medical = "MEDICAL"
-    food = "FOOD"
-    water = "WATER"
-    shelter = "SHELTER"
-    clothing = "CLOTHING"
-    transportation = "TRANSPORTATION"
-    other = "OTHER"
+    RESCUE = "RESCUE"
+    MEDICAL = "MEDICAL"
+    FOOD = "FOOD"
+    WATER = "WATER"
+    SHELTER = "SHELTER"
+    CLOTHING = "CLOTHING"
+    TRANSPORTATION = "TRANSPORTATION"
+    OTHER = "OTHER"
 
 
 class UrgencyLevelEnum(str, Enum):
     """Urgency levels for validation"""
-    low = "LOW"
-    medium = "MEDIUM"
-    high = "HIGH"
-    critical = "CRITICAL"
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
 
 
 class RequestStatusEnum(str, Enum):
     """Request status for validation"""
-    pending = "PENDING"
-    in_progress = "IN_PROGRESS"
-    completed = "COMPLETED"
-    cancelled = "CANCELLED"
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
 
 
 class DisasterRequestBase(BaseModel):
@@ -38,7 +38,7 @@ class DisasterRequestBase(BaseModel):
     title: str = Field(..., min_length=5, max_length=200, description="Brief title describing the request")
     description: str = Field(..., min_length=10, max_length=2000, description="Detailed description of the situation")
     request_type: RequestTypeEnum = Field(..., description="Type of assistance needed")
-    urgency_level: UrgencyLevelEnum = Field(default=UrgencyLevelEnum.medium, description="How urgent is this request")
+    urgency_level: UrgencyLevelEnum = Field(default=UrgencyLevelEnum.MEDIUM, description="How urgent is this request")
 
     # Contact information
     contact_name: str = Field(..., min_length=2, max_length=100, description="Name of person making the request")
@@ -78,12 +78,12 @@ class DisasterRequestBase(BaseModel):
     class Config:
         """Pydantic configuration"""
         use_enum_values = True
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "title": "Medical Emergency - Elderly Person Needs Help",
                 "description": "An elderly person is trapped in their house after flooding and needs immediate medical attention",
-                "request_type": "medical",
-                "urgency_level": "high",
+                "request_type": "MEDICAL",
+                "urgency_level": "HIGH",
                 "contact_name": "John Smith",
                 "contact_phone": "+91-9876543210",
                 "contact_email": "john@example.com",
@@ -145,7 +145,7 @@ class DisasterRequestUpdate(BaseModel):
 class DisasterRequestResponse(DisasterRequestBase):
     """Schema for disaster relief request responses"""
     id: int
-    status: RequestStatusEnum = RequestStatusEnum.pending
+    status: RequestStatusEnum = RequestStatusEnum.PENDING
     assigned_to: Optional[str] = None
     assigned_contact: Optional[str] = None
     is_verified: bool = False
@@ -200,10 +200,10 @@ class APIResponse(BaseModel):
     data: Optional[dict] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "success": True,
                 "message": "Request processed successfully",
-                "data": {"id": 123, "status": "pending"}
+                "data": {"id": 123, "status": "PENDING"}
             }
         }

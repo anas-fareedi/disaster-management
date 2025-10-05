@@ -208,6 +208,9 @@ class DisasterReliefApp {
             if (value.trim()) {
                 if (['latitude', 'longitude', 'people_affected', 'estimated_cost'].includes(key)) {
                     requestData[key] = parseFloat(value) || (key === 'people_affected' ? 1 : null);
+                } else if (['request_type', 'urgency_level'].includes(key)) {
+                    // Ensure enum values are uppercase
+                    requestData[key] = value.trim().toUpperCase();
                 } else {
                     requestData[key] = value.trim();
                 }

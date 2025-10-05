@@ -7,14 +7,23 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Default database URL for development
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./disaster_management.db")
 
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,  
-    pool_recycle=3600,   
-    echo=False           
-)
+# Configure engine based on database type
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        echo=False
+    )
+else:
+    engine = create_engine(
+        DATABASE_URL,
+        pool_pre_ping=True,  
+        pool_recycle=3600,   
+        echo=False           
+    )
 
 SessionLocal = sessionmaker(
     autocommit=False, 
@@ -34,17 +43,18 @@ def get_db():
 
 def init_db():
     """Initialize database with all tables"""
-    print("🔄 Creating database tables...")
-    Base.metadata.create_all(bind=engine)
-    print("✅ Database tables created successfully!")
+    print("Creating database tables...")
+    Base.metadata.create_all(bind=engine, checkfirst=True)
+    print("SUCCESS: Database tables created successfully!")
 
 def check_db_connection():
     """Check if database connection is working"""
     try:
         with engine.connect() as connection:
-            connection.execute("SELECT 1")
+            from sqlalchemy import text
+            connection.execute(text("SELECT 1"))
         return True
     except Exception as e:
-        print(f"❌ Database connection failed: {e}")
+        print(f"Database connection failed: {e}")
         return False
     
