@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps Test</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUuzcYGhbdVnq_mKMC3grB24zzXxnBeaU"></script>
+    <script>
+        function initMap() {
+            const location = { lat: 28.6139, lng: 77.2090 }; // Example: New Delhi
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 10,
+                center: location,
+            });
+            new google.maps.Marker({ position: location, map: map });
+        }
+        window.onload = initMap;
+    </script>
+    <style>
+        #map { height: 400px; width: 100%; }
+    </style>
+</head>
+<body>
+    <h2>Google Maps API Test</h2>
+    <div id="map"></div>
+</body>
+</html>
